@@ -14,8 +14,6 @@ let promise2 = p.then((data) => {
 		}, 1000);
 	})
 })
-promise2.then((value) => {
-	console.log(value);
-}, (reason) => {
-	console.log(reason);
+promise2.then().then().then((data) => {
+	console.log(data);
 })

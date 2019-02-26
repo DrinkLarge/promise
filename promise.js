@@ -58,7 +58,9 @@ function resolvePromise(promise2, x, resolve, reject) {
 		resolve(x);
 	}
 }
-Promise.prototype.then = function (onFulfilled, onReject) {
+Promise.prototype.then = function (onFulfilled, onRejected) {
+	onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+	onRejected = typeof onRejected === 'function' ? onRejected : err => { throw err };
 	let promise2 = new Promise((resolve, reject) => {
 		setTimeout(() => {
 			if (this.state === RESOLVED) {
@@ -66,7 +68,7 @@ Promise.prototype.then = function (onFulfilled, onReject) {
 				resolvePromise(promise2, x, resolve, reject);
 			}
 			if (this.state === REJECTED) {
-				let x = onReject(this.reason);
+				let x = onRejected(this.reason);
 				resolvePromise(promise2, x, resolve, reject);
 			}
 			if (this.state === PEDDING) {
@@ -75,7 +77,7 @@ Promise.prototype.then = function (onFulfilled, onReject) {
 					resolvePromise(promise2, x, resolve, reject);
 				});
 				this.rejectCbs.push(() => {
-					let x = onReject(this.reason);
+					let x = onRejected(this.reason);
 					resolvePromise(promise2, x, resolve, reject);
 				})
 			}
