@@ -1,0 +1,8 @@
+{
+  "name": "promise",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/DrinkLarge/promise.git",
+  "author": "陈金浩 <171111754@qq.com>",
+  "license": "MIT"
+}
