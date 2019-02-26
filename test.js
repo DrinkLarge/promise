@@ -1,11 +1,12 @@
 const Promise = require('./promise')
 let p = new Promise((resolve, reject) => {
 	console.log('start');
-	reject('reject')
-	resolve('resolve');
+	setTimeout(() => {
+		resolve('resolve');
+	}, 1000)
 });
 p.then((data) => {
-	console.log(data);
+	console.log('success' + data);
 }, (e) => {
-	console.log(e);
+	console.log('error' + e);
 })

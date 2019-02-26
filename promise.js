@@ -6,16 +6,20 @@ function Promise(excutor) {
 	this.state = PEDDING;
 	this.value = undefined;
 	this.reason = undefined;
+	this.resolveCbs = [];
+	this.rejectCbs = [];
 	function resolve(value) {
 		if (self.state === PEDDING) {
 			self.state = RESOLVED;
 			self.value = value;
+			self.resolveCbs.forEach(fn => fn());
 		}
 	}
 	function reject(reason) {
 		if (self.state === PEDDING) {
 			self.state = REJECTED;
 			self.reason = reason;
+			self.rejectCbs.forEach(fn => fn());
 		}
 	}
 	try {
@@ -27,10 +31,18 @@ function Promise(excutor) {
 
 Promise.prototype.then = function (resolve, reject) {
 	if (this.state === RESOLVED) {
-		resolve(this.value)
+		resolve(this.value);
 	}
 	if (this.state === REJECTED) {
-		reject(this.reason)
+		reject(this.reason);
+	}
+	if (this.state === PEDDING) {
+		this.resolveCbs.push(() => {
+			resolve(this.value)
+		});
+		this.rejectCbs.push(() => {
+			reject(this.reason)
+		})
 	}
 }
 module.exports = Promise;
