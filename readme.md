@@ -13,3 +13,5 @@ then方法返回一个新的promise
     - function 默认是promise
     - 对象  默认是普通对象
     - null  同常量
+
+因为promise2内部无法调用自己，所用通过异步放入下一个宏任务中

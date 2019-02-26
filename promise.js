@@ -28,26 +28,58 @@ function Promise(excutor) {
 		reject(e);
 	}
 }
+function resolvePromise(promise2, x, resolve, reject) {
+	if (promise2 === x) {
+		return reject(new TypeError('循环引用'))
+	}
+	let called;//标记状态是否已经改变，因为状态不可逆
+	if ((x !== null && typeof x === 'object') || typeof x === 'function') {
+		try {
+			let then = x.then;
+			if (typeof then === 'function') {//promise
+				if (called) return
+				called = true;
+				then.call(x, y => {
+					resolvePromise(promise2, y, resolve, reject)
+				}, r => {
+					reject(r);
+				})
+			} else {//普通对象
+				if (called) return
+				called = true;
+				resolve(x);
+			}
+		} catch (err) {
+			if (called) return
+			called = true;
+			reject(err);
+		}
+	} else {//常量
+		resolve(x);
+	}
+}
 Promise.prototype.then = function (onFulfilled, onReject) {
 	let promise2 = new Promise((resolve, reject) => {
-		if (this.state === RESOLVED) {
-			let x = onFulfilled(this.value);
-			resolve(x);
-		}
-		if (this.state === REJECTED) {
-			let x = onReject(this.reason);
-			reject(x);
-		}
-		if (this.state === PEDDING) {
-			this.resolveCbs.push(() => {
+		setTimeout(() => {
+			if (this.state === RESOLVED) {
 				let x = onFulfilled(this.value);
-				resolve(x);
-			});
-			this.rejectCbs.push(() => {
+				resolvePromise(promise2, x, resolve, reject);
+			}
+			if (this.state === REJECTED) {
 				let x = onReject(this.reason);
-				reject(x);
-			})
-		}
+				resolvePromise(promise2, x, resolve, reject);
+			}
+			if (this.state === PEDDING) {
+				this.resolveCbs.push(() => {
+					let x = onFulfilled(this.value);
+					resolvePromise(promise2, x, resolve, reject);
+				});
+				this.rejectCbs.push(() => {
+					let x = onReject(this.reason);
+					resolvePromise(promise2, x, resolve, reject);
+				})
+			}
+		})
 	})
 	return promise2;
 }
