@@ -17,4 +17,15 @@ then方法返回一个新的promise
 因为promise2内部无法调用自己，所用通过异步放入下一个宏任务中
 ## then的穿透效果
 then可以不传resolve，reject，仍然会向下传递，直到有个then内部执行了resolve，reject
+## catch
+then中走reject方法
+## Promise.resolve（）
+返回一个promise，默认resolve
+## Promise.reject（）
+返回一个promise，默认reject
+## Promise.all（）
+记录传入的数组resolve长度，与数组长度相等时整体resolve
+## Promise.race()
+利用状态不可逆
+
 
