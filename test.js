@@ -6,6 +6,8 @@ let p = new Promise((resolve, reject) => {
 	}, 1000)
 });
 p.then((data) => {
+	console.log(data);
+}).then((data) => {
 	console.log('success' + data);
 }, (e) => {
 	console.log('error' + e);

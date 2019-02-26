@@ -28,21 +28,27 @@ function Promise(excutor) {
 		reject(e);
 	}
 }
-
-Promise.prototype.then = function (resolve, reject) {
-	if (this.state === RESOLVED) {
-		resolve(this.value);
-	}
-	if (this.state === REJECTED) {
-		reject(this.reason);
-	}
-	if (this.state === PEDDING) {
-		this.resolveCbs.push(() => {
-			resolve(this.value)
-		});
-		this.rejectCbs.push(() => {
-			reject(this.reason)
-		})
-	}
+Promise.prototype.then = function (onFulfilled, onReject) {
+	let promise2 = new Promise((resolve, reject) => {
+		if (this.state === RESOLVED) {
+			let x = onFulfilled(this.value);
+			resolve(x);
+		}
+		if (this.state === REJECTED) {
+			let x = onReject(this.reason);
+			reject(x);
+		}
+		if (this.state === PEDDING) {
+			this.resolveCbs.push(() => {
+				let x = onFulfilled(this.value);
+				resolve(x);
+			});
+			this.rejectCbs.push(() => {
+				let x = onReject(this.reason);
+				reject(x);
+			})
+		}
+	})
+	return promise2;
 }
 module.exports = Promise;
